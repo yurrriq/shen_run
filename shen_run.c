@@ -22,13 +22,13 @@ int exit_on_eof = 1;
 int running = 1;
 
 char *err_expr = ""
-"(define shen-run.call-with-err\n"
-"  F -> (trap-error (thaw F)\n"
-"                   (/. E (let F (open (value shen-run.error) out)\n"
-"                              - (pr (error-to-string E) F)\n"
-"                              - (pr (n->string (shen.newline)) F)\n"
-"                              - (close F)\n"
-"                           %s))))\n";
+  "(define shen-run.call-with-err\n"
+  "  F -> (trap-error (thaw F)\n"
+  "                   (/. E (let F (open (value shen-run.error) out)\n"
+  "                              - (pr (error-to-string E) F)\n"
+  "                              - (pr (n->string (shen.newline)) F)\n"
+  "                              - (close F)\n"
+  "                           %s))))\n";
 
 void
 usage(const char *argv0)
@@ -44,12 +44,12 @@ write_escaped(int fd, const char *s)
 
   for (i = 0; *s; ++i, ++s) {
     switch (*s) {
-      case 0: case '"': case '\n': case '\r': case '\\':
-        n = 5;
-        break;
-      default:
-        n = 1;
-        buf[j++] = *s;
+    case 0: case '"': case '\n': case '\r': case '\\':
+      n = 5;
+      break;
+    default:
+      n = 1;
+      buf[j++] = *s;
     }
     if (j + n >= sizeof(buf)) {
       write(fd, buf, j);
@@ -315,29 +315,29 @@ main(int argc, char **argv)
   if (ret == 0) {
     ret = 0;
     switch ((pid = forkpty(&fd, 0, 0, 0))) {
-      case -1:
-        perror("forkpty");
-        return 1;
+    case -1:
+      perror("forkpty");
+      return 1;
 
-      case 0:
-        set_noecho(0);
-        execvp(command[0], command);
-        perror("exec");
-        return 1;
+    case 0:
+      set_noecho(0);
+      execvp(command[0], command);
+      perror("exec");
+      return 1;
 
-      default:
-        signal(SIGHUP, handle_sighup);
-        init_shen(fd, argc - i, argv + i);
-        serve_process(fd, err, argc == i);
-        ret = 0;
-        close(fd);
-        wait(0);
-        if (err_bytes)
-          ret = 1;
-        if (err >= 0)
-          close(err);
-        if (err_name)
-          remove(err_name);
+    default:
+      signal(SIGHUP, handle_sighup);
+      init_shen(fd, argc - i, argv + i);
+      serve_process(fd, err, argc == i);
+      ret = 0;
+      close(fd);
+      wait(0);
+      if (err_bytes)
+        ret = 1;
+      if (err >= 0)
+        close(err);
+      if (err_name)
+        remove(err_name);
     }
   } else
     usage(argv[0]);
