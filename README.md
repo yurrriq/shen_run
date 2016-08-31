@@ -42,7 +42,7 @@ Or you can add a line
 #!/usr/bin/env shen_run
 ```
 
-at the first line of your script and make file executable
+at the top of your script and make it executable
 
 ```fish
 chmod +x your_script.shen
@@ -56,7 +56,7 @@ Then you can run it as any other program:
 
 ### Example
 
-Located at [src/example.shen](src/example.shen)
+*Located at [src/example.shen](src/example.shen).*
 
 ```shen
 #!/usr/bin/env shen_run_sbcl
