@@ -5,7 +5,7 @@
 
 # NAME
 
-**shen_run** -- Shen REPL trampoline
+**shen_run** -- Shen REPL trampoline.
 
 
 # SYNOPSIS
