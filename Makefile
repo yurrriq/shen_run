@@ -1,5 +1,5 @@
 name        = shen_run
-impl       ?= clisp
+impl       ?= sbcl
 bin        := bin/$(name)_$(impl)
 config.h   := include/$(impl)/config.h
 
