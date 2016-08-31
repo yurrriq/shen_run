@@ -6,7 +6,13 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifdef __APPLE__
+#include <util.h>
+#else
 #include <pty.h>
+#endif
+
 #include <unistd.h>
 #include <errno.h>
 #include <signal.h>
