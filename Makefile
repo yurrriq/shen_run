@@ -1,30 +1,41 @@
-name = shen_run
-impl = clisp
+name        = shen_run
+impl       ?= clisp
+bin        := bin/$(name)_$(impl)
+config.h   := include/$(impl)/config.h
 
-CFLAGS = -Wall
-CFLAGS += -I$(impl)
-LDFLAGS += -lutil
-prefix=/usr/local
-bindir=$(prefix)/bin
-mandir=$(prefix)/share/man
+CFLAGS      = -Wall
+CFLAGS     += -I include -I include/$(impl)
+LDFLAGS    += -lutil
+prefix     ?= usr/local
+bindir     := $(prefix)/bin
+destbindir := $(destdir)/$(bindir)
+mandir     := $(prefix)/share/man
+maninstdir := $(destdir)/$(mandir)/man1
 
-all: $(name)_$(impl)
+all: $(bin)
 
-install:
-	mkdir -p $(destdir)/$(bindir) $(destdir)/$(mandir)/man1
-	install -m 755 $(name)_$(impl) $(destdir)/$(bindir)
-	install -m 644 shen_run.1 $(destdir)/$(mandir)/man1
-	ln -s shen_run.1 $(destdir)/$(mandir)/man1/$(name)_$(impl).1
+install: $(bin)
+	install -d $(destbindir)
+	install -m 755 $(bin) $(destbindir)
+
+install-man: man/shen_run.1
+	install -d $(maninstdir)
+	install -m 644 man/shen_run.1 $(maninstdir)
+	ln -sf shen_run.1 $(maninstdir)/$(name)_$(impl).1
 
 clean:
-	rm -f script.h $(name)_$(impl) 2>/dev/null
+	$(RM) include/script.h $(bin) $(config.h) 2>/dev/null
 
-$(impl)/config.h:
-	mkdir -p $(impl)
-	test -f $@ || cp config.def.h $@
+$(config.h):
+	mkdir -p include/$(impl)
+	test -f $@ || cp include/config.def.h $@
 
-$(name)_$(impl): shen_run.c $(impl)/config.h script.h
+include/script.h: src/script.shen
+	bin/mkrun <$< >$@
+
+$(bin): src/shen_run.c $(config.h) include/script.h
+	mkdir -p bin
 	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
 
-script.h: script.shen
-	./mkrun <$< >$@
+man/%.1: man/%.1.md
+	pandoc -f markdown -t man -s -o $@ $<
